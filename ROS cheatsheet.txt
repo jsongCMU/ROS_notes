@@ -1,7 +1,8 @@
 ROS cheatsheet
+
 * CONDA
-rqt will not work in conda environment
-conda deactivate # conda activate (to undo)
+- rqt will not work in conda environment
+- conda deactivate # conda activate (to undo)
 
 * File nav
 rospack find [package_name] # get path to ros package
@@ -11,34 +12,35 @@ rosls package # list ros packages
 
 * catkin workspace
 catkin_make
-Example struct:
-workspace_folder/        -- WORKSPACE
-  src/                   -- SOURCE SPACE
-    CMakeLists.txt       -- 'Toplevel' CMake file, provided by catkin
-    package_1/
-      CMakeLists.txt     -- CMakeLists.txt file for package_1
-      package.xml        -- Package manifest for package_1
-    ...
-    package_n/
-      CMakeLists.txt     -- CMakeLists.txt file for package_n
-      package.xml        -- Package manifest for package_n
+- Example struct:
+    workspace_folder/        -- WORKSPACE
+      src/                   -- SOURCE SPACE
+        CMakeLists.txt       -- 'Toplevel' CMake file, provided by catkin
+        package_1/
+          CMakeLists.txt     -- CMakeLists.txt file for package_1
+          package.xml        -- Package manifest for package_1
+        ...
+        package_n/
+          CMakeLists.txt     -- CMakeLists.txt file for package_n
+          package.xml        -- Package manifest for package_n
 
 * Create package
-catkin_create_pkg <package_name> [depend1] [depend2] [depend3] # create package, list dependencies
+- Create package when in catkin_ws/src
+catkin_create_pkg <package_name> [depend1] [depend2] [depend3] # create package, list dependencies (eg. catkin_create_pkg beginner_tutorials std_msgs rospy roscpp)
 catkin_make # build packages in workspace
 catkin_make --source my_src # build packages at specified location
 . ~/catkin_ws/devel/setup.bash # add workspace to ROS environment
 
 * Graph overview
-Nodes: A node is an executable that uses ROS to communicate with other nodes.
-Messages: ROS data type used when subscribing or publishing to a topic.
-Topics: Nodes can publish messages to a topic as well as subscribe to a topic to receive messages.
-Master: Name service for ROS (i.e. helps nodes find each other)
-rosout: ROS equivalent of stdout/stderr
-roscore: Master + rosout + parameter server (parameter server will be introduced later) 
+- Nodes: A node is an executable that uses ROS to communicate with other nodes.
+- Messages: ROS data type used when subscribing or publishing to a topic.
+- Topics: Nodes can publish messages to a topic as well as subscribe to a topic to receive messages.
+- Master: Name service for ROS (i.e. helps nodes find each other)
+- rosout: ROS equivalent of stdout/stderr
+- roscore: Master + rosout + parameter server (parameter server will be introduced later) 
 
 * Nodes
-Executable that is connected to ROS network
+- Executable that is connected to ROS network
 roscore # create master
 rosnode list # list nodes
 rosnode info /rosout # get info on node rosout
@@ -48,8 +50,8 @@ rosnode cleanup # remove unused nodes
 rosnode ping my_turtle # ping node
 
 * Topics
-Topic is a channel for outputting and receiving info
-Publisher outputs info onto topic, subscribers listen to topic
+- Topic is a channel for outputting and receiving info
+- Publisher outputs info onto topic, subscribers listen to topic
 rosrun rqt_graph rqt_graph # display graph of system
 rostopic echo [topic] # show data published on topic
 rostopic list -v # list topics (verbose)
@@ -60,7 +62,7 @@ rostopic pub -r 1 [topic] [msg_type] [args] # publish message to topic every 1 s
 rostopic hz [topic] # get data publish freq for topic
 
 * Service
-Service is a channel for making requests, and sending responses
+- Service is a channel for making requests, and sending responses
 rosservice list # print information about active services
 rosservice call [service] [args] # call the service with the provided args
 rosservice type [service] # print service type
@@ -69,7 +71,7 @@ rosservice find # find services by service type
 rosservice uri # print service ROSRPC uri
 
 * Parameter server
-Way to store and manipulate data
+- Way to store and manipulate data
 rosparam set # set parameter
 rosparam get # get parameter
 rosparam get / # get all parameters
@@ -89,32 +91,235 @@ roslaunch [package] [filename.launch] # launch node as specified by file
 rosed [package_name] [filename] # edit file in package
 
 * srv and msg files
-msg files are simple text files that describe the fields of a ROS message
-	Header header
-	string child_frame_id
-	geometry_msgs/PoseWithCovariance pose
-	geometry_msgs/TwistWithCovariance twist
-srv file describes a service: a request and a response
-	int64 A
-	int64 B
-	---
-	int64 Sum
+- msg files are simple text files that describe the fields of a ROS message
+    Header header
+    string child_frame_id
+    geometry_msgs/PoseWithCovariance pose
+    geometry_msgs/TwistWithCovariance twist
+- srv file describes a service: a request and a response
+    int64 A
+    int64 B
+    ---
+    int64 Sum
 rosmsg show [message type] # show message format
 rossrv show <service type> # show service format
 roscp [package_name] [file_to_copy_path] [copy_path] # copy file in package
 
 * Help
-Using rosmsg as an example:
+- Using rosmsg as an example:
 rosmsg -h # # list subcomands for rosmsg
 rosmsg show -h # get info for subcommand
 
 * Python
 rospy.loginfo(str) - print str to console, node's log, and rosout
-constructor args are in the same order as in the .msg file
-Make sure you have sourced your workspace's setup.sh file after calling catkin_make: source ./devel/setup.bash
+- constructor args are in the same order as in the .msg file
+- Make sure you have sourced your workspace's setup.sh file after calling catkin_make: source ./devel/setup.bash
 
 * C++
-If you have subscription in an application, and don't have ros::spinOnce(), your callbacks would never get called
-ros::spin() enters a loop, calling message callbacks as fast as possible; low CPU usage if nothing to do
+- If you have subscription in an application, and don't have ros::spinOnce(), your callbacks would never get called
+- ros::spin() enters a loop, calling message callbacks as fast as possible; low CPU usage if nothing to do
 
 
+* Workflow
+- Install ROS (http://wiki.ros.org/ROS/Installation)
+- Create workspace
+    mkdir -p ~/catkin_ws/src
+    cd ~/catkin_ws/
+    catkin_make
+- Create package in workspace/src
+    cd catkin_ws/src
+    catkin_create_pkg <package_name> [depend1] [depend2] [depend3]
+    cd ~/catkin_ws
+    catkin_make
+    . ~/catkin_ws/devel/setup.bash
+- Customize package
+    - package.xml: modify description tag, maintainer tags, license tags, dependencies tags
+       - <description>: Update description to be helpful
+       - <maintainer email="user@todo.todo">user</maintainer>: Use your preferred email
+       - <license>: pick license (eg. BSD)
+       - <build_depend>, <buildtool_depend>, <exec_depend>, <test_depend>: may need to be added
+- Build package
+    source /opt/ros/noetic/setup.bash # already in ~/.bashrc
+    cd catkin_ws
+    catkin_make # catkin_make [make_targets] [-DCMAKE_VARIABLES=...]
+- Create custom messages
+    cd catkin_ws/src/<package>
+    - Create and customize message:
+       mkdir msg
+       echo "int64 num" > msg/Num.msg
+    - Update package.xml
+       - Uncomment the following:
+        <build_depend>message_generation</build_depend>
+        <exec_depend>message_runtime</exec_depend>
+    - Update CMakeList.txt
+       - Add message_generation to find_package
+         find_package(catkin REQUIRED COMPONENTS
+            <dependencies>
+            message_generation
+         )
+       - Add .msg to add_message_files
+         add_message_files(
+           FILES
+           Num.msg
+         )
+       - Uncomment generate_messages
+         generate_messages(
+           DEPENDENCIES
+           std_msgs
+         )
+       - Update CATKIN_DEPENDS in catkin_package
+         catkin_package(
+           CATKIN_DEPENDS message_runtime
+         )
+    - Check ROS can see your message
+        rosmsg show <package>/Num
+    - Make package
+        cd catkin_ws
+        catkin_make
+        cd -
+- Create custom service
+    cd catkin_ws/src/<package>
+    - Copy existing service:
+       mkdir srv
+       roscp rospy_tutorials AddTwoInts.srv srv/AddTwoInts.srv
+    - Update package.xml
+       - Uncomment the following:
+        <build_depend>message_generation</build_depend>
+        <exec_depend>message_runtime</exec_depend>
+    - Update CMakeList.txt
+        - Add message_generation to find_package
+         find_package(catkin REQUIRED COMPONENTS
+            <dependencies>
+            message_generation
+         )
+        - Add .srv to add_service_files
+         add_service_files(
+           FILES
+           AddTwoInts.srv
+         )
+        - Uncomment generate_messages
+         generate_messages(
+           DEPENDENCIES
+           std_msgs
+         )
+    - Check ROS can see your service
+        rossrv show <package>/AddTwoInts
+    - Make package
+        cd catkin_ws
+        catkin_make
+        cd -
+- Python
+    - Python goes in scripts:
+        roscd <package>
+        mkdir scripts
+        cd scripts
+    - Example code
+        - Publisher
+            - Get code
+                wget https://raw.github.com/ros/ros_tutorials/kinetic-devel/rospy_tutorials/001_talker_listener/talker.py
+                chmod +x talker.py
+            - Update CMakeList.txt
+                catkin_install_python(PROGRAMS
+                  scripts/talker.py
+                  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+                )
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+        - Subscriber
+            - Get code
+                wget https://raw.github.com/ros/ros_tutorials/kinetic-devel/rospy_tutorials/001_talker_listener/listener.py
+                chmod +x listener.py
+            - Update CMakeList.txt
+                catkin_install_python(PROGRAMS
+                  scripts/listener.py
+                  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+                )
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+        - Server
+            - Get code
+                - http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
+                - Create add_two_ints_server.py
+                chmod +x add_two_ints_server.py
+            - Update CMakeList.txt
+                catkin_install_python(PROGRAMS
+                  scripts/add_two_ints_server.py
+                  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+                )
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+        - Client
+            - Get code
+                - http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
+                - Create add_two_ints_client.py
+                chmod +x add_two_ints_client.py
+            - Update CMakeList.txt
+                catkin_install_python(PROGRAMS
+                  scripts/add_two_ints_client.py
+                  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+                )
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+    - Execute Python nodes
+        roscore
+        cd ~/catkin_ws
+        source ./devel/setup.bash
+        rosrun <package> XXXX.py
+- CPP
+    - CPP goes in src:
+        roscd <package>
+        mkdir -p src
+        cd src
+    - Example code
+        - Publisher
+            - Get code
+                wget https://raw.github.com/ros/ros_tutorials/noetic-devel/roscpp_tutorials/talker/talker.cpp
+            - Add to CMakeList.txt
+                add_executable(talker src/talker.cpp)
+                target_link_libraries(talker ${catkin_LIBRARIES})
+                add_dependencies(talker <package>_generate_messages_cpp)
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+        - Subscriber
+            - Get code
+                wget https://raw.github.com/ros/ros_tutorials/noetic-devel/roscpp_tutorials/listener/listener.cpp
+            - Add to CMakeList.txt
+                add_executable(listener src/listener.cpp)
+                target_link_libraries(listener ${catkin_LIBRARIES})
+                add_dependencies(listener <package>_generate_messages_cpp)
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+        - Server
+            - Get code
+                - http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29
+                - Create add_two_ints_server.cpp
+            - Add to CMakeList.txt
+                add_executable(add_two_ints_server src/add_two_ints_server.cpp)
+                target_link_libraries(add_two_ints_server ${catkin_LIBRARIES})
+                add_dependencies(add_two_ints_server beginner_tutorials_gencpp)
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+        - Client
+            - Get code
+                - http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29
+                - Create add_two_ints_client.cpp
+            - Add to CMakeList.txt
+                add_executable(add_two_ints_client src/add_two_ints_client.cpp)
+                target_link_libraries(add_two_ints_client ${catkin_LIBRARIES})
+                add_dependencies(add_two_ints_client beginner_tutorials_gencpp)
+            - Build code
+                cd ~/catkin_ws
+                catkin_make
+    - Executables located here at ~/catkin_ws/devel/lib/<package>
+    - Execute CPP nodes
+        roscore
+        cd ~/catkin_ws
+        source ./devel/setup.bash
+        rosrun <package> XXXX
